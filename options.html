@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LinguaMate 翻譯助手設定</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>LinguaMate 翻譯助手設定</h1>
+      <form id="settings-form">
+        <section class="field-group">
+          <label for="api-key">OpenAI API Key</label>
+          <input type="password" id="api-key" name="apiKey" placeholder="sk-..." required />
+          <p class="hint">金鑰僅儲存在本機的 Chrome 儲存空間中。</p>
+        </section>
+
+        <section class="field-group">
+          <label for="model">模型選擇</label>
+          <select id="model" name="model">
+            <option value="gpt-5">GPT-5</option>
+          </select>
+        </section>
+
+        <section class="field-group">
+          <label for="user-prompt">翻譯指令</label>
+          <textarea
+            id="user-prompt"
+            name="userPrompt"
+            rows="4"
+            placeholder="請幫我把下列內容翻譯成台灣慣用的繁體中文"
+          ></textarea>
+          <p class="hint">系統將會以上述指令作為提示詞，送至 OpenAI Chat Completion API。</p>
+        </section>
+
+        <div class="actions">
+          <button type="submit">儲存設定</button>
+          <span id="status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
