@@ -171,7 +171,18 @@ async function translatePage() {
 
   const chunks = chunkBlocks(blocks);
 
-  for (const chunk of chunks) {
+  for (const [chunkIndex, chunk] of chunks.entries()) {
+    const elementCount = chunk.length;
+    const charCount = chunk.reduce((total, block) => total + (block.text?.length || 0), 0);
+
+    if (typeof console !== 'undefined' && typeof console.debug === 'function') {
+      console.debug('[gpt-translate] Translating chunk', {
+        chunkIndex,
+        elementCount,
+        charCount
+      });
+    }
+
     try {
       const translations = await translateChunk(settings, chunk);
       translations.forEach(({ element, translation }) => {
@@ -184,7 +195,22 @@ async function translatePage() {
         translationNode.textContent = translation.replace(/\\n/g, '\n');
         element.insertAdjacentElement('afterend', translationNode);
       });
+      if (typeof console !== 'undefined' && typeof console.debug === 'function') {
+        console.debug('[gpt-translate] Chunk translated successfully', {
+          chunkIndex,
+          elementCount,
+          charCount
+        });
+      }
     } catch (error) {
+      if (typeof console !== 'undefined' && typeof console.debug === 'function') {
+        console.debug('[gpt-translate] Chunk translation failed', {
+          chunkIndex,
+          elementCount,
+          charCount,
+          error
+        });
+      }
       console.error(error);
       alert(error.message || '翻譯時發生錯誤，請查看主控台以取得更多資訊。');
       break;
