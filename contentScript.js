@@ -185,8 +185,9 @@ async function translatePage() {
         element.insertAdjacentElement('afterend', translationNode);
       });
     } catch (error) {
-      console.error(error);
-      alert(error.message || '翻譯時發生錯誤，請查看主控台以取得更多資訊。');
+      console.error('翻譯請求失敗：', error);
+      const message = error?.message || '翻譯時發生錯誤，請查看主控台以取得更多資訊。';
+      alert(`翻譯時發生錯誤：${message}`);
       break;
     }
   }
