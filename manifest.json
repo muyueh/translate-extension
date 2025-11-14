@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "GPT Translator",
+  "name": "LinguaMate 翻譯助手",
   "description": "Translate page content into Traditional Chinese using your OpenAI account.",
   "version": "1.0.0",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": ["https://api.openai.com/*"],
   "action": {
-    "default_title": "Translate with GPT"
+    "default_title": "使用 LinguaMate 翻譯"
   },
   "background": {
     "service_worker": "background.js",

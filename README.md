@@ -1,4 +1,4 @@
-# GPT 翻譯 Chrome 擴充功能
+# LinguaMate 翻譯助手（Chrome 擴充功能）
 
 這個專案是一個簡易的 Chrome 擴充功能，使用 OpenAI 的 Chat Completions API（模型固定為 GPT-5）把網頁上的文字翻譯成台灣慣用的繁體中文。點擊擴充功能圖示即可在原本文字區塊下方插入翻譯結果，保持原有的段落結構。
 
