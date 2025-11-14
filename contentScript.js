@@ -57,13 +57,45 @@ function clearPreviousTranslations() {
 }
 
 function collectTextBlocks() {
-  const selector = 'p, h1, h2, h3, h4, h5, h6, li, blockquote';
+  const selector = 'p, h1, h2, h3, h4, h5, h6, li, blockquote, div';
   const elements = Array.from(document.querySelectorAll(selector));
   const targets = [];
 
   for (const element of elements) {
     if (element.classList.contains('gpt-translation-block')) {
       continue;
+    }
+
+    if (element.tagName.toLowerCase() === 'div') {
+      const hasBlockChildren = Array.from(element.children).some((child) => {
+        if (child.classList?.contains('gpt-translation-block')) {
+          return true;
+        }
+        const tag = child.tagName?.toLowerCase();
+        return (
+          tag &&
+          [
+            'p',
+            'div',
+            'ul',
+            'ol',
+            'table',
+            'section',
+            'article',
+            'nav',
+            'aside',
+            'header',
+            'footer',
+            'main',
+            'blockquote',
+            'li'
+          ].includes(tag)
+        );
+      });
+
+      if (hasBlockChildren) {
+        continue;
+      }
     }
 
     const text = element.innerText.trim();
