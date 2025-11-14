@@ -41,11 +41,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`OpenAI API 回傳錯誤：${response.status} ${response.statusText}`);
+      let parsedBody;
+      let rawBody;
+      try {
+        parsedBody = await response.clone().json();
+      } catch (jsonError) {
+        try {
+          rawBody = await response.clone().text();
+        } catch (textError) {
+          rawBody = '';
+        }
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        console.error('OpenAI API returned an error response', {
+          status: response.status,
+          statusText: response.statusText,
+          body: parsedBody ?? rawBody
+        });
+
+        const errorMessage =
+          (parsedBody && typeof parsedBody === 'object' && parsedBody?.error?.message) ||
+          (parsedBody && typeof parsedBody === 'object' && parsedBody?.message) ||
+          (typeof rawBody === 'string' && rawBody.trim()) ||
+          `OpenAI API 回傳錯誤：${response.status} ${response.statusText}`;
+
+        sendResponse({ error: errorMessage });
+        return;
+      }
+
+      const data =
+        (parsedBody && typeof parsedBody === 'object') ? parsedBody : await response.json();
       sendResponse({ data });
     } catch (error) {
       console.error('Proxy OpenAI request failed:', error);
