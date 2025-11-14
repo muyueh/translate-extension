@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "GPT Translator",
+  "description": "Translate page content into Traditional Chinese using your OpenAI account.",
+  "version": "1.0.0",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://api.openai.com/*"],
+  "action": {
+    "default_title": "Translate with GPT"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html"
+}
