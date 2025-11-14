@@ -21,6 +21,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   const { apiKey, model, messages } = message.payload || {};
+  const normalizedModel =
+    !model || model === 'gpt-5' || model === 'gpt-5-mini' ? 'gpt-5-nano' : model;
 
   (async () => {
     try {
@@ -35,9 +37,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           Authorization: `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model,
-          messages,
-          temperature: 0.2
+          model: normalizedModel,
+          messages
         })
       });
 

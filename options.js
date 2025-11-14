@@ -4,6 +4,7 @@ const modelSelect = document.getElementById('model');
 const userPromptInput = document.getElementById('user-prompt');
 const statusElement = document.getElementById('status');
 const DEFAULT_PROMPT = '請幫我把下列內容翻譯成台灣慣用的繁體中文';
+const DEFAULT_MODEL = 'gpt-5-nano';
 
 function showStatus(message, type = 'success') {
   statusElement.textContent = message;
@@ -15,9 +16,16 @@ function loadSettings() {
     if (items.apiKey) {
       apiKeyInput.value = items.apiKey;
     }
-    if (items.model) {
-      modelSelect.value = items.model;
+
+    const storedModel = items.model || DEFAULT_MODEL;
+    const normalizedModel =
+      storedModel === 'gpt-5' || storedModel === 'gpt-5-mini' ? DEFAULT_MODEL : storedModel;
+    modelSelect.value = normalizedModel;
+
+    if (normalizedModel !== storedModel) {
+      chrome.storage.local.set({ model: normalizedModel });
     }
+
     userPromptInput.value = items.userPrompt || DEFAULT_PROMPT;
   });
 }
@@ -30,7 +38,9 @@ form.addEventListener('submit', (event) => {
     return;
   }
 
-  const model = modelSelect.value;
+  const rawModel = modelSelect.value || DEFAULT_MODEL;
+  const model =
+    rawModel === 'gpt-5' || rawModel === 'gpt-5-mini' ? DEFAULT_MODEL : rawModel;
   const userPrompt = userPromptInput.value.trim() || DEFAULT_PROMPT;
 
   chrome.storage.local.set({ apiKey, model, userPrompt }, () => {

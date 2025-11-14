@@ -5,9 +5,13 @@ const DEFAULT_PROMPT = '請幫我把下列內容翻譯成台灣慣用的繁體�
 async function getSettings() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['apiKey', 'model', 'userPrompt'], (result) => {
+      const storedModel = result.model || 'gpt-5-nano';
+      const normalizedModel =
+        storedModel === 'gpt-5' || storedModel === 'gpt-5-mini' ? 'gpt-5-nano' : storedModel;
+
       resolve({
         apiKey: result.apiKey || '',
-        model: result.model || 'gpt-5',
+        model: normalizedModel,
         userPrompt: result.userPrompt || DEFAULT_PROMPT
       });
     });
@@ -190,8 +194,9 @@ async function translatePage() {
           return;
         }
         element.dataset[TRANSLATION_MARKER] = 'true';
-        const translationNode = document.createElement(element.tagName);
+        const translationNode = document.createElement('div');
         translationNode.classList.add('gpt-translation-block');
+        translationNode.dataset.originalTag = element.tagName.toLowerCase();
         translationNode.textContent = translation.replace(/\\n/g, '\n');
         element.insertAdjacentElement('afterend', translationNode);
       });
