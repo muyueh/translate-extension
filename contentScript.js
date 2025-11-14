@@ -14,6 +14,19 @@ async function getSettings() {
   });
 }
 
+function proxyOpenAIRequest(payload) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'gptTranslateChunk', payload }, (response) => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        reject(new Error(lastError.message));
+        return;
+      }
+      resolve(response);
+    });
+  });
+}
+
 function ensureStyleInjected() {
   if (document.getElementById('gpt-translation-style')) {
     return;
@@ -99,24 +112,21 @@ async function translateChunk({ apiKey, model, userPrompt }, blocks) {
     }
   ];
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature: 0.2
-    })
+  const response = await proxyOpenAIRequest({
+    apiKey,
+    model,
+    messages
   });
 
-  if (!response.ok) {
-    throw new Error(`OpenAI API 回傳錯誤：${response.status} ${response.statusText}`);
+  if (!response) {
+    throw new Error('無法與背景服務進行通訊。');
   }
 
-  const data = await response.json();
+  if (response.error) {
+    throw new Error(response.error);
+  }
+
+  const data = response.data;
   const content = data?.choices?.[0]?.message?.content;
 
   if (!content) {
